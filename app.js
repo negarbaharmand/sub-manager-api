@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
 });
 
 // The server doesn't start listening yet, we'll need to specify a port at the end of this file.
-app.listen(3000, () => {
+app.listen(3000, () => { //start listening when starting the application
     console.log('Subscription Tracker API is running on http://localhost:3000');
 });
 
