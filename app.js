@@ -1,5 +1,6 @@
 // Import the express module to create a web server
 import express from 'express';
+import { PORT } from './config/env.js';
 
 // Create an instance of the express application
 const app = express();
@@ -12,7 +13,7 @@ app.get('/', (req, res) => {
 
 // The server doesn't start listening yet, we'll need to specify a port at the end of this file.
 app.listen(3000, () => { //start listening when starting the application
-    console.log('Subscription Tracker API is running on http://localhost:3000');
+    console.log(`Subscription Tracker API is running on http://localhost:${PORT}`);
 });
 
 export default app;
