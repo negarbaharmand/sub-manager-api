@@ -4,7 +4,7 @@ import { PORT } from './config/env.js';
 import userRouter from "./routes/user.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import subscriptionRouter from "./routes/subscription.routes.js";
-import subscriptionRoutes from "./routes/subscription.routes.js";
+import connectToDatabase from "./database/mongodb.js";
 
 // Create an instance of the express application
 const app = express();
@@ -21,8 +21,9 @@ app.get('/', (req, res) => {
 });
 
 // The server doesn't start listening yet, we'll need to specify a port at the end of this file.
-app.listen(PORT, () => { //start listening when starting the application
+app.listen(PORT, async () => { //start listening when starting the application
     console.log(`Subscription Tracker API is running on http://localhost:${PORT}`);
+    await connectToDatabase();
 });
 
 export default app;
