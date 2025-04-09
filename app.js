@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 // The server doesn't start listening yet, we'll need to specify a port at the end of this file.
 app.listen(PORT, async () => { //start listening when starting the application
     console.log(`Subscription Tracker API is running on http://localhost:${PORT}`);
+    //connect to the DB
     await connectToDatabase();
 });
 
