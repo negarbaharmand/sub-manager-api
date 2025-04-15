@@ -31,3 +31,4 @@ const errorMiddleware = (err, req, res, next) => {
 };
 // Create a subscription -> middlewares (check for renewal date) -> middlewares (check for errors) -> next -> controller
 
+export default errorMiddleware;
