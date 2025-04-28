@@ -3,16 +3,12 @@ import mongoose from "mongoose";
 const subscriptionSchema = new mongoose.Schema({
 //fields:
     name: {
-        type: String, required: [true, 'Subscription name is required'],
-        trim: true,
-        minlength: 2,
-        maxlength: 100,
+        type: String, required: [true, 'Subscription name is required'], trim: true, minlength: 2, maxlength: 100,
     },
     price: {
-        type: Number, required: [true, 'Subscription price is required'],
-        min: [0, 'Price must be greater than 0'],
+        type: Number, required: [true, 'Subscription price is required'], min: [0, 'Price must be greater than 0'],
     },
-    currency: {type: String, enum: ['USD', 'EUR', 'GBP'], default: 'USD'},
+    currency: {type: String, enum: ['USD', 'EUR', 'GBP','SEK'], default: 'USD'},
     frequency: {type: String, enum: ['daily', 'weekly', 'monthly', 'yearly'],},
     category: {
         type: String,
@@ -20,50 +16,34 @@ const subscriptionSchema = new mongoose.Schema({
         required: true,
     },
     paymentMethod: {
-        type: String,
-        required: true,
-        trim: true,
+        type: String, required: true, trim: true,
     },
     status: {
-        type: String,
-        enum: ['active', 'cancelled', 'expired'],
-        default: 'active',
+        type: String, enum: ['active', 'cancelled', 'expired'], default: 'active',
     },
     startDate: {
-        type: Date,
-        required: true,
-        validate: {
-            validator: (value) => value <= new Date(),
-            message: 'Start Date must be in the past',
+        type: Date, required: true, validate: {
+            validator: (value) => value <= new Date(), message: 'Start Date must be in the past',
         }
     },
     renewalDate: {
-        type: Date,
-        required: true,
-        validate: {
+        type: Date, validate: {
             validator: function (value) {
                 return value > this.startDate;
-            },
-            message: 'Renewal date must be after the start date',
+            }, message: 'Renewal date must be after the start date',
         }
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-        index: true,
+        type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true,
     }
 }, {timestamps: true});
 
 //create a function that happens before each document is created
 // Auto-calculate renewal date if missing.
-subscriptionSchema.pre('save', function () {
+subscriptionSchema.pre('save', function (next) {
     if (!this.renewalDate) {
         const renewalPeriods = {
-            daily: 1,
-            weekly: 7,
-            monthly: 30,
-            yearly: 365,
+            daily: 1, weekly: 7, monthly: 30, yearly: 365,
         };
         this.renewalDate = new Date(this.startDate);
         this.renewalDate.setDate(this.renewalDate.getDate() + renewalPeriods[this.frequency]);
@@ -72,4 +52,8 @@ subscriptionSchema.pre('save', function () {
     if (this.renewalDate < new Date()) {
         this.status = 'expired';
     }
-})
+    next();
+});
+
+const Subscription = mongoose.model('Subscription', subscriptionSchema);
+export default Subscription;
