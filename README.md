@@ -13,6 +13,16 @@
 - **Global Error Handling**
 - **Modular Middleware Architecture**
 
+
+---
+## **Additional Features**
+- **Upstash for Workflows**:
+- Used to automate the process of sending renewal reminder emails.
+- Workflow logic is executed to ensure timely notifications for subscription renewals.
+- **Nodemailer for Email Notifications**:
+- Automated emails are sent 7, 5, 2, and 1 day(s) before the renewal date of subscriptions.
+- Sends customizable emails based on subscription details to keep users informed about upcoming
+renewals.
 ---
 
 
@@ -31,12 +41,12 @@
 ## API Endpoints
 
 | Endpoint             | Method | Description                           | Auth Required |
-|----------------------|--------|---------------------------------------|----------------|
+|----------------------|--------|---------------------------------------|--------------- |
 | `/api/auth/register` | POST   | Register new user                     | ❌             |
 | `/api/auth/login`    | POST   | Login and receive JWT                 | ❌             |
-| `/api/user`          | GET    | Get authenticated user info           | ✅ Bearer token |
-| `/api/subscription`  | POST   | Create a new subscription             | ✅              |
-| `/api/subscription`  | GET    | List subscriptions for a user         | ✅              |
+| `/api/user`          | GET    | Get authenticated user info           | ✅ Bearer token|
+| `/api/subscription`  | POST   | Create a new subscription             | ✅ Bearer token|
+| `/api/subscription`  | GET    | List subscriptions for a user         | ✅             |
 
 > ⚙️ End date is auto-calculated based on frequency if not provided.
 > 📧 Email reminders are sent automatically before renewals.
@@ -63,13 +73,24 @@ npm install
 Create a `.env` file in the root directory:
 
 ```env
+# PORT
 PORT=5500
+SERVER_URL="http://localhost:5500"
+# ENVIRONMENT
 NODE_ENV=development
-DB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/
-JWT_SECRET=yourSecretKey
-JWT_EXPIRES_IN=1d
-ARCJET_KEY=yourArcjetKey
-ARCJET_ENV=development
+# DATABASE
+DB_URI=mongodb+srv://<your_username>:<your_password>@cluster0.ei2xprf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+# JWT AUTH
+JWT_SECRET="<your_jwt_secret>"
+JWT_EXPIRES_IN="1d"
+# ARCJET
+ARCJET_KEY="<your_arcjet_key>"
+ARCJET_ENV="development"
+# UPSTASH
+QSTASH_URL="<your_upstash_url>"
+QSTASH_TOKEN="<your_upstash_token>"
+# NODEMAILER
+EMAIL_PASSWORD="<your_email_password>"
 ```
 
 4. **Run the app**
@@ -77,13 +98,6 @@ ARCJET_ENV=development
 ```bash
 npm run dev
 ```
-
----
-
-## Testing
-
-_Tests coming soon_ — currently tested via HTTPie for endpoint validation.
-
 ---
 
 ## Middleware & Error Handling
@@ -91,4 +105,6 @@ _Tests coming soon_ — currently tested via HTTPie for endpoint validation.
 - All protected routes use a JWT authorization middleware
 - Arcjet middleware is applied to rate-limit and inspect API requests
 - Centralized error handler returns consistent error responses
+
+  
 
