@@ -6,6 +6,7 @@ const require = createRequire(import.meta.url);
 const {serve} = require('@upstash/workflow/express');
 
 import Subscription from "../models/subscription.model.js";
+import {sendReminderEmail} from "../utils/send-email.js";
 
 
 const REMINDERS = [7, 5, 2, 1];
@@ -29,24 +30,38 @@ export const sendReminders = serve(async (context) => {
         if (reminderDate.isAfter(dayjs())) {
             await sleepUntilReminders(context, `Reminder ${daysBefore} days before`, reminderDate)
         }
-        await triggerReminder(context, `Reminder ${daysBefore} days before`);
+        if (dayjs().isSame(reminderDate, 'day')) {
+            await triggerReminder(context, `${daysBefore} days before reminder`, subscription);
+        }
     }
 });
 
 const fetchSubscription = async (context, subscriptionId) => {
-    return await context.run('get subscription', () => {
-        return Subscription.findById(subscriptionId).populate('user', 'name email');
+    const doc = await Subscription.findById(subscriptionId).populate('user', 'name email');
+    if (!doc) return null;
+
+    const subscription = doc.toObject(); // Flatten it
+    await context.run('log subscription fetch', () => {
+        console.log(`Fetched subscription ${subscriptionId}`);
     });
-}
+
+    return subscription;
+};
 
 const sleepUntilReminders = async (context, label, date) => {
     console.log(`Sleeping until ${label} reminder at ${date}`);
     await context.sleepUntil(label, date.toDate());
 }
 
-const triggerReminder = async (context, label) => {
-    return await context.run(label, () => {
+const triggerReminder = async (context, label, subscription) => {
+    return await context.run(label, async () => {
         console.log(`Triggering ${label} reminder`);
         //send email, SMS, push notification
-    })
+
+        await sendReminderEmail({
+            to: subscription.user.email,
+            type: label,
+            subscription,
+        });
+    });
 }
