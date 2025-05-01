@@ -70,28 +70,8 @@ npm install
 
 3. **Set up environment variables**
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the root directory according to the .env.example file
 
-```env
-# PORT
-PORT=5500
-SERVER_URL="http://localhost:5500"
-# ENVIRONMENT
-NODE_ENV=development
-# DATABASE
-DB_URI=mongodb+srv://<your_username>:<your_password>@cluster0.ei2xprf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-# JWT AUTH
-JWT_SECRET="<your_jwt_secret>"
-JWT_EXPIRES_IN="1d"
-# ARCJET
-ARCJET_KEY="<your_arcjet_key>"
-ARCJET_ENV="development"
-# UPSTASH
-QSTASH_URL="<your_upstash_url>"
-QSTASH_TOKEN="<your_upstash_token>"
-# NODEMAILER
-EMAIL_PASSWORD="<your_email_password>"
-```
 
 4. **Run the app**
 
